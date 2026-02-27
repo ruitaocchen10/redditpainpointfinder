@@ -2,7 +2,7 @@
 
 Reddit Pain Point Finder — Minimal / Neutral design language.
 
-Inspired by Linear and Vercel: zinc grays, white/black base, subtle indigo accent. Clean, data-focused, and restrained.
+Inspired by Linear and Vercel: zinc grays, white/black base, subtle orange accent. Clean, data-focused, and restrained.
 
 ---
 
@@ -66,16 +66,16 @@ Existing usage in `app/page.tsx`:
 - `text-zinc-950` — strong link text (light)
 - `text-zinc-50` — primary heading + strong link text (dark)
 
-### Accent — Indigo
+### Accent — Orange
 
 | Purpose              | Class              | Hex       |
 |----------------------|--------------------|-----------|
-| Primary CTA bg       | `bg-indigo-600`    | `#4f46e5` |
-| Primary CTA hover    | `bg-indigo-700`    | `#4338ca` |
-| Link color           | `text-indigo-600`  | `#4f46e5` |
-| Focus ring           | `ring-indigo-500`  | `#6366f1` |
-| Dark mode CTA bg     | `bg-indigo-500`    | `#6366f1` |
-| Dark mode CTA hover  | `bg-indigo-400`    | `#818cf8` |
+| Primary CTA bg       | `bg-orange-600`    | `#ea580c` |
+| Primary CTA hover    | `bg-orange-700`    | `#c2410c` |
+| Link color           | `text-orange-600`  | `#ea580c` |
+| Focus ring           | `ring-orange-500`  | `#f97316` |
+| Dark mode CTA bg     | `bg-orange-500`    | `#f97316` |
+| Dark mode CTA hover  | `bg-orange-400`    | `#fb923c` |
 
 ### Semantic Status
 
@@ -84,7 +84,7 @@ Existing usage in `app/page.tsx`:
 | Success      | `text-green-600` / `bg-green-50`        | `text-green-400` / `bg-green-950`         |
 | Warning      | `text-amber-600` / `bg-amber-50`        | `text-amber-400` / `bg-amber-950`         |
 | Destructive  | `text-red-600` / `bg-red-50`            | `text-red-400` / `bg-red-950`             |
-| Info         | `text-indigo-600` / `bg-indigo-50`      | `text-indigo-400` / `bg-indigo-950`       |
+| Info         | `text-orange-600` / `bg-orange-50`      | `text-orange-400` / `bg-orange-950`       |
 
 ---
 
@@ -181,8 +181,8 @@ In dark mode, prefer `border border-zinc-800` over shadows for elevation — sha
 All buttons: `h-12`, `rounded-full`, `font-medium`, `text-base`, `transition-colors`, `px-5`.
 
 ```
-Primary     — bg-indigo-600 text-white hover:bg-indigo-700
-              dark: bg-indigo-500 hover:bg-indigo-400
+Primary     — bg-orange-600 text-white hover:bg-orange-700
+              dark: bg-orange-500 hover:bg-orange-400
 
 Secondary   — border border-black/[.08] hover:bg-black/[.04] hover:border-transparent
               dark: border-white/[.145] hover:bg-[#1a1a1a]
@@ -195,16 +195,16 @@ Destructive — bg-red-600 text-white hover:bg-red-700
 
 > Note: `app/page.tsx` uses `bg-foreground text-background` for its primary button, mapping to
 > `#171717` / `#ffffff` (light) and `#ededed` / `#0a0a0a` (dark). New primary CTAs should use
-> indigo instead.
+> orange instead.
 
-Focus state (all buttons): `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2`
+Focus state (all buttons): `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2`
 
 ### Input / Textarea
 
 ```
 h-10 w-full rounded-md border border-zinc-200 bg-white px-3 py-2
 text-sm text-zinc-950 placeholder:text-zinc-400
-focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500
 
 dark: border-zinc-700 bg-zinc-900 text-zinc-50 placeholder:text-zinc-500
 ```
@@ -231,7 +231,7 @@ Neutral:     bg-zinc-100 text-zinc-700      dark: bg-zinc-800 text-zinc-300
 Success:     bg-green-50 text-green-700     dark: bg-green-950 text-green-400
 Warning:     bg-amber-50 text-amber-700     dark: bg-amber-950 text-amber-400
 Destructive: bg-red-50 text-red-700         dark: bg-red-950 text-red-400
-Info:        bg-indigo-50 text-indigo-700   dark: bg-indigo-950 text-indigo-400
+Info:        bg-orange-50 text-orange-700   dark: bg-orange-950 text-orange-400
 ```
 
 ### Skeleton (loading state)
@@ -289,12 +289,12 @@ Dark mode is driven by `prefers-color-scheme: dark` via CSS media query — **no
 }
 ```
 
-Tailwind's `dark:` prefix (class-based) can still be used for zinc/indigo palette shifts (e.g., `dark:text-zinc-400`), which is the pattern in `app/page.tsx`.
+Tailwind's `dark:` prefix (class-based) can still be used for zinc/orange palette shifts (e.g., `dark:text-zinc-400`), which is the pattern in `app/page.tsx`.
 
 ### Rules
 
 - **Do** use `bg-background` / `text-foreground` for base surfaces and text
-- **Do** use `dark:` variants for zinc/indigo palette shifts
+- **Do** use `dark:` variants for zinc/orange palette shifts
 - **Do** prefer borders over shadows for elevation in dark mode
 - **Don't** hard-code light-mode hex values without a `dark:` counterpart
 - **Don't** add a JS-based theme toggle unless explicitly requested
@@ -330,8 +330,8 @@ To extend the design system, add tokens to the `@theme inline` block:
   --color-foreground: var(--foreground);
 
   /* new accent tokens */
-  --color-accent: #4f46e5;        /* indigo-600 */
-  --color-accent-hover: #4338ca;  /* indigo-700 */
+  --color-accent: #ea580c;        /* orange-600 */
+  --color-accent-hover: #c2410c;  /* orange-700 */
 }
 ```
 
