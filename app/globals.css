@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
+/* Class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+/* Activated when <html class="dark"> */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -12,15 +21,74 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.main-bg {
+  background:
+    radial-gradient(ellipse 100% 35% at 50% 0%, rgba(234, 88, 12, 0.07) 0%, transparent 70%),
+    theme('colors.zinc.100');
+}
+
+.dark .main-bg {
+  background:
+    radial-gradient(ellipse 100% 35% at 50% 0%, rgba(234, 88, 12, 0.10) 0%, transparent 60%),
+    theme('colors.zinc.950');
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body.sidebar-resizing,
+body.sidebar-resizing * {
+  user-select: none !important;
+}
+
+body.sidebar-resizing {
+  cursor: col-resize;
+}
+
+body.drawer-open {
+  overflow: hidden;
+}
+
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -7px;
+  width: 14px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 40;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-resizer:hover,
+.sidebar-resizer:focus-visible,
+.sidebar-resizer.is-active {
+  background: color-mix(in oklab, rgb(249 115 22) 22%, transparent);
+}
+
+.sidebar-resizer-line {
+  width: 2px;
+  height: 42px;
+  border-radius: 999px;
+  background: color-mix(in oklab, rgb(113 113 122) 45%, transparent);
+  transition: background-color 150ms ease;
+}
+
+.sidebar-resizer:hover .sidebar-resizer-line,
+.sidebar-resizer:focus-visible .sidebar-resizer-line,
+.sidebar-resizer.is-active .sidebar-resizer-line {
+  background: rgb(249 115 22);
 }
