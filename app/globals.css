@@ -79,16 +79,50 @@ body.drawer-open {
   background: color-mix(in oklab, rgb(249 115 22) 22%, transparent);
 }
 
-.sidebar-resizer-line {
-  width: 2px;
-  height: 42px;
-  border-radius: 999px;
-  background: color-mix(in oklab, rgb(113 113 122) 45%, transparent);
-  transition: background-color 150ms ease;
+.sidebar-resizer-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 150ms ease;
 }
 
-.sidebar-resizer:hover .sidebar-resizer-line,
-.sidebar-resizer:focus-visible .sidebar-resizer-line,
-.sidebar-resizer.is-active .sidebar-resizer-line {
+.sidebar-resizer-dots::before,
+.sidebar-resizer-dots::after,
+.sidebar-resizer-dots span {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in oklab, rgb(113 113 122) 60%, transparent);
+  transition: background-color 150ms ease;
+  flex-shrink: 0;
+}
+
+.sidebar-resizer:hover .sidebar-resizer-dots,
+.sidebar-resizer:focus-visible .sidebar-resizer-dots,
+.sidebar-resizer.is-active .sidebar-resizer-dots {
+  opacity: 1;
+}
+
+.sidebar-resizer:hover .sidebar-resizer-dots::before,
+.sidebar-resizer:hover .sidebar-resizer-dots::after,
+.sidebar-resizer:hover .sidebar-resizer-dots span,
+.sidebar-resizer:focus-visible .sidebar-resizer-dots::before,
+.sidebar-resizer:focus-visible .sidebar-resizer-dots::after,
+.sidebar-resizer:focus-visible .sidebar-resizer-dots span,
+.sidebar-resizer.is-active .sidebar-resizer-dots::before,
+.sidebar-resizer.is-active .sidebar-resizer-dots::after,
+.sidebar-resizer.is-active .sidebar-resizer-dots span {
   background: rgb(249 115 22);
+}
+
+.sidebar-container {
+  transition: width 150ms ease;
+}
+
+.sidebar-container[data-resizing="true"] {
+  transition: none;
 }

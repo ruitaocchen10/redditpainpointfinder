@@ -8,8 +8,8 @@ interface AppShellProps {
 }
 
 const DESKTOP_WIDTH_DEFAULT = 224;
-const DESKTOP_WIDTH_MIN = 220;
-const DESKTOP_WIDTH_MAX = 420;
+const DESKTOP_WIDTH_MIN = 160;
+const DESKTOP_WIDTH_MAX = 480;
 const COMPACT_WIDTH = 64;
 
 const WIDTH_STORAGE_KEY = "ui.sidebar.width";
@@ -107,8 +107,11 @@ export default function AppShell({ children }: AppShellProps) {
     event.preventDefault();
     event.stopPropagation();
 
+    const startX = event.clientX;
+    const startWidth = sidebarWidth;
+
     const onMove = (moveEvent: PointerEvent) => {
-      setSidebarWidth(clampWidth(moveEvent.clientX));
+      setSidebarWidth(clampWidth(startWidth + (moveEvent.clientX - startX)));
     };
 
     const onUp = () => {
@@ -130,12 +133,11 @@ export default function AppShell({ children }: AppShellProps) {
 
     event.currentTarget.setPointerCapture(event.pointerId);
     setIsDragging(true);
-    setSidebarWidth(clampWidth(event.clientX));
   };
 
   return (
     <div className="flex min-h-screen">
-      <div className="hidden md:flex relative shrink-0" style={{ width: `${desktopWidth}px` }}>
+      <div className="sidebar-container hidden md:flex relative shrink-0" data-resizing={isDragging} style={{ width: `${desktopWidth}px` }}>
         <Sidebar
           compact={isCompact}
           onToggleCompact={() => setIsCompact((value) => !value)}
@@ -150,7 +152,7 @@ export default function AppShell({ children }: AppShellProps) {
             title="Drag to resize sidebar"
             onPointerDown={startResize}
           >
-            <span className="sidebar-resizer-line" aria-hidden="true" />
+            <span className="sidebar-resizer-dots" aria-hidden="true"><span /></span>
           </button>
         ) : null}
       </div>
