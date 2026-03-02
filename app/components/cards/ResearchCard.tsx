@@ -1,3 +1,5 @@
+import DeleteAnalysisButton from "../ui/DeleteAnalysisButton";
+
 interface ResearchCardProps {
   id: string;
   subreddits: string[];
@@ -15,7 +17,7 @@ export default function ResearchCard({
 }: ResearchCardProps) {
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-zinc-200/80 dark:hover:shadow-zinc-950/60">
-      {/* Subreddit chips + date */}
+      {/* Subreddit chips + date + delete */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap gap-1.5">
           {subreddits.map((sub) => (
@@ -27,9 +29,12 @@ export default function ResearchCard({
             </span>
           ))}
         </div>
-        <span className="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">
-          {date}
-        </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-xs text-zinc-400 dark:text-zinc-500">
+            {date}
+          </span>
+          <DeleteAnalysisButton id={id} />
+        </div>
       </div>
 
       {/* Pain count */}
