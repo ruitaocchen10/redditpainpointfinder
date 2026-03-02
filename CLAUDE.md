@@ -24,21 +24,19 @@ shadcn/ui for component library
 
 Backend
 
-FastAPI (Python) — async-native REST API
-Celery + Redis — background job queue for async Reddit data fetching and LLM analysis
-PRAW — Reddit API client for data collection
-BERTopic / sentence-transformers — NLP clustering of pain points
-Claude API (Anthropic) — LLM summarization and pain point labeling
+Next.js API routes — server-side logic and orchestration
+Trigger.dev (or Inngest) — background job processing for async Reddit fetching and LLM analysis
+Reddit API (snoowrap or native fetch) — data collection
+Claude API (Anthropic) — LLM analysis and pain point labeling
 
-Database & Caching
+Database & Auth
 
-PostgreSQL — primary database for storing users, searches, cached posts, and analysis results
-Redis — short-term request-level cache (TTL-based) and Celery broker
+Supabase — managed PostgreSQL database + authentication
 
-Auth & Billing
+Billing
 
-TBD — likely Clerk (auth) + Stripe (billing)
+TBD — likely Stripe
 
 Deployment
 
-TBD — likely Railway or Render
+TBD — possible experiment with NexLayer

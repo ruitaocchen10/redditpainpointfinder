@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../providers/ThemeProvider";
+import { createClient } from "../../../lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 interface SettingsModalProps {
   open: boolean;
@@ -10,6 +12,13 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   const { preference, setPreference } = useTheme();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -21,6 +30,8 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   }, [open, onClose]);
 
   if (!open) return null;
+
+  const email = user?.email ?? "—";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -77,7 +88,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         {/* Account */}
         <div className="px-5 py-4 flex flex-col gap-1">
           <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Account</p>
-          <p className="text-sm text-zinc-600 dark:text-zinc-300">user@example.com</p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-300">{email}</p>
         </div>
 
         <div className="h-px bg-zinc-100 dark:bg-zinc-800" />

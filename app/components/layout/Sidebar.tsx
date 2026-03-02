@@ -9,7 +9,7 @@ import ProfileDropdown from "../ui/ProfileDropdown";
 const NAV_LINKS = [
   {
     label: "Dashboard",
-    href: "/",
+    href: "/dashboard",
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

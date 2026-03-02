@@ -26,14 +26,32 @@ const SEVERITY_DOT: Record<PainPoint["severity"], string> = {
   low: "bg-yellow-500",
 };
 
-export default function PainPointCard({ pain }: { pain: PainPoint }) {
+interface PainPointCardProps {
+  pain: PainPoint;
+  isSelected?: boolean;
+  onSelect?: () => void;
+}
+
+export default function PainPointCard({ pain, isSelected, onSelect }: PainPointCardProps) {
   const [expanded, setExpanded] = useState(false);
 
+  const isDesktop = onSelect !== undefined;
+
   return (
-    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
+    <div
+      className={`rounded-xl border overflow-hidden transition-colors ${
+        isSelected
+          ? "border-orange-400 dark:border-orange-500 bg-orange-50/50 dark:bg-orange-950/10"
+          : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900"
+      }`}
+    >
       <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full text-left p-5 flex items-start gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+        onClick={isDesktop ? onSelect : () => setExpanded(!expanded)}
+        className={`w-full text-left p-5 flex items-start gap-3 transition-colors ${
+          isSelected
+            ? ""
+            : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+        }`}
       >
         {/* Severity dot */}
         <span
@@ -50,19 +68,21 @@ export default function PainPointCard({ pain }: { pain: PainPoint }) {
               <span className="inline-flex items-center rounded-full bg-orange-100 dark:bg-orange-900/40 px-2.5 py-0.5 text-xs font-semibold text-orange-700 dark:text-orange-400">
                 {pain.frequency}×
               </span>
-              <svg
-                className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              {!isDesktop && (
+                <svg
+                  className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              )}
             </div>
           </div>
 
@@ -85,7 +105,8 @@ export default function PainPointCard({ pain }: { pain: PainPoint }) {
         </div>
       </button>
 
-      {expanded && (
+      {/* Accordion body — only in mobile mode */}
+      {!isDesktop && expanded && (
         <div className="border-t border-zinc-100 dark:border-zinc-800 px-5 pb-5 pt-4 flex flex-col gap-4">
           {/* AI Summary */}
           <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">

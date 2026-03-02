@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "../../../lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 interface ProfileDropdownProps {
   compact?: boolean;
@@ -8,7 +11,23 @@ interface ProfileDropdownProps {
 
 export default function ProfileDropdown({ compact = false }: ProfileDropdownProps) {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -19,6 +38,16 @@ export default function ProfileDropdown({ compact = false }: ProfileDropdownProp
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+  };
+
+  const email = user?.email ?? "";
+  const avatarLetter = email.charAt(0).toUpperCase() || "U";
+  const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
 
   return (
     <div className="relative" ref={containerRef}>
@@ -34,16 +63,22 @@ export default function ProfileDropdown({ compact = false }: ProfileDropdownProp
       >
         <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg overflow-hidden">
           <div className="px-3 py-3 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center shrink-0">
-              <span className="text-sm font-semibold text-orange-700 dark:text-orange-300">U</span>
+            <div className="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center shrink-0 overflow-hidden">
+              {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-sm font-semibold text-orange-700 dark:text-orange-300">{avatarLetter}</span>
+              )}
             </div>
-            <span className="text-sm text-zinc-700 dark:text-zinc-300">user@example.com</span>
+            <span className="text-sm text-zinc-700 dark:text-zinc-300 truncate">{email}</span>
           </div>
 
           <div className="h-px bg-zinc-100 dark:bg-zinc-800" />
 
           <button
             type="button"
+            onClick={handleSignOut}
             className="flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -66,11 +101,16 @@ export default function ProfileDropdown({ compact = false }: ProfileDropdownProp
           (compact ? "justify-center px-2" : "gap-2.5 px-3")
         }
       >
-        <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center shrink-0">
-          <span className="text-xs font-semibold text-orange-700 dark:text-orange-300">U</span>
+        <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center shrink-0 overflow-hidden">
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-xs font-semibold text-orange-700 dark:text-orange-300">{avatarLetter}</span>
+          )}
         </div>
         {!compact ? (
-          <span className="text-sm text-zinc-500 dark:text-zinc-400 truncate">user@example.com</span>
+          <span className="text-sm text-zinc-500 dark:text-zinc-400 truncate">{email}</span>
         ) : null}
       </button>
     </div>
