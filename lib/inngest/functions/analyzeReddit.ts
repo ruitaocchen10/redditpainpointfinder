@@ -13,7 +13,7 @@ export const analyzeReddit = inngest.createFunction(
     // Fetch analysis config
     const { data: analysis, error: fetchError } = await supabase
       .from("analyses")
-      .select("id, subreddits, time_range, post_limit")
+      .select("id, subreddits, time_range, post_limit, min_upvotes, keyword_filter, exclude_keywords")
       .eq("id", analysisId)
       .single();
 
@@ -33,6 +33,9 @@ export const analyzeReddit = inngest.createFunction(
           subreddits: analysis.subreddits as string[],
           timeRange: analysis.time_range as string,
           postLimit: analysis.post_limit as number,
+          minUpvotes: analysis.min_upvotes as number,
+          keywordFilter: analysis.keyword_filter as string[],
+          excludeKeywords: analysis.exclude_keywords as string[],
         });
 
         if (fetchedPosts.length > 0) {

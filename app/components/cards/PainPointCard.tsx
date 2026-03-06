@@ -47,7 +47,7 @@ export default function PainPointCard({ pain, isSelected, onSelect }: PainPointC
     >
       <button
         onClick={isDesktop ? onSelect : () => setExpanded(!expanded)}
-        className={`w-full text-left p-5 flex items-start gap-3 transition-colors ${
+        className={`w-full text-left p-5 flex items-start gap-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-inset ${
           isSelected
             ? ""
             : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"

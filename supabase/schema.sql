@@ -95,9 +95,12 @@ create table public.analyses (
   user_id         uuid not null references public.profiles(id) on delete cascade,
   subreddits      text[] not null,
   time_range      public.time_range not null default 'month',
-  post_limit      integer not null default 100
-                    check (post_limit in (50, 100, 250, 500)),
-  status          public.analysis_status not null default 'pending',
+  post_limit       integer not null default 100
+                     check (post_limit in (50, 100, 250, 500)),
+  min_upvotes      integer not null default 2,
+  keyword_filter   text[]  not null default '{}',
+  exclude_keywords text[]  not null default '{}',
+  status           public.analysis_status not null default 'pending',
   job_id          text,
   error_message   text,
   post_count      integer,

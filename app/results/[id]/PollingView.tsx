@@ -44,7 +44,9 @@ export default function PollingView({
   const [status, setStatus] = useState<AnalysisStatus>(initialStatus);
   const [resultData, setResultData] = useState<ResultData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [justCompletedStep, setJustCompletedStep] = useState<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const prevStepIndexRef = useRef(getStepIndex(initialStatus));
 
   useEffect(() => {
     if (status === "completed" || status === "failed") return;
@@ -76,6 +78,18 @@ export default function PollingView({
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [analysisId, status]);
+
+  const currentStepIndex = getStepIndex(status);
+
+  useEffect(() => {
+    if (currentStepIndex > prevStepIndexRef.current) {
+      setJustCompletedStep(prevStepIndexRef.current);
+      prevStepIndexRef.current = currentStepIndex;
+      const t = setTimeout(() => setJustCompletedStep(null), 700);
+      return () => clearTimeout(t);
+    }
+    prevStepIndexRef.current = currentStepIndex;
+  }, [currentStepIndex]);
 
   if (status === "completed" && resultData) {
     return <ResultsView data={resultData} />;
@@ -115,8 +129,6 @@ export default function PollingView({
     );
   }
 
-  const currentStepIndex = getStepIndex(status);
-
   return (
     <div className="min-h-screen flex items-center justify-center text-zinc-900 dark:text-zinc-100">
       <div className="max-w-sm w-full mx-auto px-8 py-12 flex flex-col gap-8">
@@ -139,7 +151,7 @@ export default function PollingView({
                   {/* Connector line + icon */}
                   <div className="flex flex-col items-center">
                     <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                      className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                         isDone
                           ? "border-orange-500 bg-orange-500"
                           : isActive
@@ -147,6 +159,9 @@ export default function PollingView({
                           : "border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900"
                       }`}
                     >
+                      {isDone && i === justCompletedStep && (
+                        <span className="absolute inset-0 rounded-full bg-orange-400 animate-ping opacity-75" />
+                      )}
                       {isDone ? (
                         <svg
                           className="h-4 w-4 text-white"

@@ -36,11 +36,11 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-zinc-900/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-zinc-900/60 animate-fade-in" onClick={onClose} />
 
       {/* Dialog */}
       <div
-        className="relative z-10 w-full max-w-md mx-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl"
+        className="relative z-10 w-full max-w-md mx-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-xl animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -50,7 +50,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
             type="button"
             onClick={onClose}
             aria-label="Close settings"
-            className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded"
+            className="cursor-pointer text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -104,7 +104,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           </div>
           <button
             type="button"
-            className="self-start bg-orange-600 dark:bg-orange-500 text-white text-sm font-medium px-4 py-1.5 rounded-full hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+            className="cursor-pointer self-start bg-orange-600 dark:bg-orange-500 text-white text-sm font-medium px-4 py-1.5 rounded-full hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
           >
             Upgrade to Pro
           </button>

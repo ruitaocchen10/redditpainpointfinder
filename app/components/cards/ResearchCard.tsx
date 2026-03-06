@@ -1,4 +1,5 @@
 import DeleteAnalysisButton from "../ui/DeleteAnalysisButton";
+import CountUp from "../ui/CountUp";
 
 interface ResearchCardProps {
   id: string;
@@ -39,9 +40,10 @@ export default function ResearchCard({
 
       {/* Pain count */}
       <div className="flex items-center gap-1.5">
-        <span className="text-3xl font-bold text-orange-600 dark:text-orange-500 tabular-nums">
-          {painCount}
-        </span>
+        <CountUp
+          target={painCount}
+          className="text-3xl font-bold text-orange-600 dark:text-orange-500 tabular-nums"
+        />
         <span className="text-sm text-zinc-500 dark:text-zinc-400">
           pain points
         </span>

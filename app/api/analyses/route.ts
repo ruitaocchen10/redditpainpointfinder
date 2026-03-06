@@ -4,6 +4,7 @@ import { inngest } from "../../../lib/inngest/client";
 
 const VALID_TIME_RANGES = ["week", "month", "year", "all"];
 const VALID_POST_LIMITS = [50, 100, 250, 500];
+const VALID_MIN_UPVOTES = [0, 2, 5, 10, 25, 50, 100];
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { subreddits, timeRange, postLimit } = body;
+  const { subreddits, timeRange, postLimit, minUpvotes, keywordFilter, excludeKeywords } = body;
 
   if (
     !Array.isArray(subreddits) ||
@@ -37,6 +38,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid postLimit" }, { status: 400 });
   }
 
+  const resolvedMinUpvotes = minUpvotes ?? 2;
+  if (!VALID_MIN_UPVOTES.includes(resolvedMinUpvotes)) {
+    return NextResponse.json({ error: "Invalid minUpvotes" }, { status: 400 });
+  }
+
+  const resolvedKeywordFilter: string[] = Array.isArray(keywordFilter)
+    ? keywordFilter.map((s: string) => s.trim()).filter(Boolean).slice(0, 10)
+    : [];
+
+  const resolvedExcludeKeywords: string[] = Array.isArray(excludeKeywords)
+    ? excludeKeywords.map((s: string) => s.trim()).filter(Boolean).slice(0, 10)
+    : [];
+
   const { data, error } = await supabase
     .from("analyses")
     .insert({
@@ -44,6 +58,9 @@ export async function POST(req: NextRequest) {
       subreddits,
       time_range: timeRange,
       post_limit: postLimit,
+      min_upvotes: resolvedMinUpvotes,
+      keyword_filter: resolvedKeywordFilter,
+      exclude_keywords: resolvedExcludeKeywords,
     })
     .select("id")
     .single();

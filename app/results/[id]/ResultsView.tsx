@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import PainPointCard, { PainPoint, RedditPost } from "../../components/cards/PainPointCard";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 
 export interface ResultData {
   subreddits: string[];
@@ -67,7 +68,7 @@ export default function ResultsView({ data }: { data: ResultData }) {
 
         {/* Back link */}
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 rounded"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -200,35 +201,39 @@ export default function ResultsView({ data }: { data: ResultData }) {
         {/* Controls bar */}
         <div className="flex items-center gap-3">
           <span className="text-sm text-zinc-500 dark:text-zinc-400">Sort by</span>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortKey)}
-            className="h-9 rounded-md border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 px-3 py-1.5 text-sm text-zinc-700 dark:text-zinc-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 cursor-pointer"
-          >
-            <option value="frequency">Frequency</option>
-            <option value="severity">Severity</option>
-            <option value="recent">Most recent</option>
-          </select>
+          <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
+            <SelectTrigger className="h-9 w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="frequency">Frequency</SelectItem>
+              <SelectItem value="severity">Severity</SelectItem>
+              <SelectItem value="recent">Most recent</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Mobile: single column accordion list */}
-        <div className="md:hidden flex flex-col gap-3">
-          {sorted.map((pain) => (
-            <PainPointCard key={pain.id} pain={pain} />
+        <div key={`mobile-${sort}`} className="md:hidden flex flex-col gap-3">
+          {sorted.map((pain, i) => (
+            <div key={pain.id} className="animate-fade-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
+              <PainPointCard pain={pain} />
+            </div>
           ))}
         </div>
 
         {/* Desktop: two-column split panel */}
         <div className="hidden md:flex gap-6 items-start">
           {/* Left: compact card list */}
-          <div className="w-[380px] shrink-0 flex flex-col gap-3">
-            {sorted.map((pain) => (
-              <PainPointCard
-                key={pain.id}
-                pain={pain}
-                isSelected={selectedId === pain.id}
-                onSelect={() => setSelectedId(pain.id)}
-              />
+          <div key={`desktop-${sort}`} className="w-[380px] shrink-0 flex flex-col gap-3">
+            {sorted.map((pain, i) => (
+              <div key={pain.id} className="animate-fade-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
+                <PainPointCard
+                  pain={pain}
+                  isSelected={selectedId === pain.id}
+                  onSelect={() => setSelectedId(pain.id)}
+                />
+              </div>
             ))}
           </div>
 

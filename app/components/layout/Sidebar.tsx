@@ -109,7 +109,7 @@ export default function Sidebar({
             onClick={onToggleCompact}
             aria-label={compact ? "Expand sidebar" : "Collapse sidebar"}
             title={compact ? "Expand sidebar" : "Collapse sidebar"}
-            className="h-8 w-8 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 flex items-center justify-center"
+            className="cursor-pointer h-8 w-8 rounded-md text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 flex items-center justify-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -143,8 +143,8 @@ export default function Sidebar({
                 title={compact ? link.label : undefined}
                 aria-label={compact ? link.label : undefined}
                 className={
-                  "flex items-center rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 " +
-                  (compact ? "justify-center" : "gap-2.5") +
+                  "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 " +
+                  (compact ? "justify-center" : "") +
                   " " +
                   (pathname === link.href
                     ? "bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 font-medium"
@@ -152,7 +152,9 @@ export default function Sidebar({
                 }
               >
                 {link.icon}
-                {!compact ? link.label : null}
+                <span className={`overflow-hidden whitespace-nowrap transition-[opacity,max-width] duration-200 ${compact ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}>
+                  {link.label}
+                </span>
               </Link>
             </li>
           ))}
@@ -164,8 +166,8 @@ export default function Sidebar({
           title={compact ? "Settings" : undefined}
           aria-label={compact ? "Settings" : undefined}
           className={
-            "mt-1 flex items-center rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 w-full text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 " +
-            (compact ? "justify-center" : "gap-2.5")
+            "cursor-pointer mt-1 flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 w-full text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 " +
+            (compact ? "justify-center" : "")
           }
         >
           <svg
@@ -183,7 +185,9 @@ export default function Sidebar({
             <circle cx="12" cy="12" r="3" />
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
           </svg>
-          {!compact ? "Settings" : null}
+          <span className={`overflow-hidden whitespace-nowrap transition-[opacity,max-width] duration-200 ${compact ? "max-w-0 opacity-0" : "max-w-[200px] opacity-100"}`}>
+            Settings
+          </span>
         </button>
       </nav>
 

@@ -28,7 +28,8 @@ export interface RedditPostData {
 async function fetchSubredditPosts(
   subreddit: string,
   limit: number,
-  timeFilter: string
+  timeFilter: string,
+  minUpvotes: number
 ): Promise<RedditPostData[]> {
   const url = `${REDDIT_API_BASE}/r/${subreddit}/top.json?limit=${limit}&t=${timeFilter}`;
   const res = await fetch(url, {
@@ -48,7 +49,7 @@ async function fetchSubredditPosts(
       const post = child.data;
       // Filter out link-only posts (no self-text) and low-score posts
       if (!post.is_self) return false;
-      if ((post.score ?? 0) < 2) return false;
+      if ((post.score ?? 0) < minUpvotes) return false;
       if (!post.selftext || post.selftext === "[deleted]" || post.selftext === "[removed]") return false;
       return true;
     })
@@ -109,10 +110,16 @@ export async function fetchPosts({
   subreddits,
   timeRange,
   postLimit,
+  minUpvotes = 2,
+  keywordFilter = [],
+  excludeKeywords = [],
 }: {
   subreddits: string[];
   timeRange: string;
   postLimit: number;
+  minUpvotes?: number;
+  keywordFilter?: string[];
+  excludeKeywords?: string[];
 }): Promise<RedditPostData[]> {
   const redditTimeFilter = TIME_MAP[timeRange] ?? "month";
 
@@ -122,7 +129,7 @@ export async function fetchPosts({
   // Fetch posts from each subreddit in parallel
   const subResults = await Promise.all(
     subreddits.map((sub) =>
-      fetchSubredditPosts(sub, perSubBudget, redditTimeFilter)
+      fetchSubredditPosts(sub, perSubBudget, redditTimeFilter, minUpvotes)
     )
   );
 
@@ -146,9 +153,22 @@ export async function fetchPosts({
     }
   }
 
+  // Apply keyword filters
+  let filtered = pooled;
+  if (keywordFilter.length > 0 || excludeKeywords.length > 0) {
+    const lowerIncludes = keywordFilter.map((k) => k.toLowerCase());
+    const lowerExcludes = excludeKeywords.map((k) => k.toLowerCase());
+    filtered = pooled.filter((post) => {
+      const text = (post.title + " " + (post.body_text ?? "")).toLowerCase();
+      if (lowerIncludes.length > 0 && !lowerIncludes.some((k) => text.includes(k))) return false;
+      if (lowerExcludes.some((k) => text.includes(k))) return false;
+      return true;
+    });
+  }
+
   // Sort by engagement and take top postLimit
-  pooled.sort((a, b) => engagementScore(b) - engagementScore(a));
-  const topPosts = pooled.slice(0, postLimit);
+  filtered.sort((a, b) => engagementScore(b) - engagementScore(a));
+  const topPosts = filtered.slice(0, postLimit);
 
   // Fetch top comment for the top 30 posts sequentially to respect public API rate limits (~10 req/min)
   const commentCandidates = topPosts.slice(0, 30);

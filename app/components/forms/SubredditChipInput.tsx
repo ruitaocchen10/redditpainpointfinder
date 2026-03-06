@@ -21,6 +21,7 @@ export default function SubredditChipInput({
     new Map()
   );
   const [value, setValue] = useState("");
+  const [inputStatus, setInputStatus] = useState<"idle" | "validating" | "valid" | "invalid">("idle");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const getValidChips = useCallback(
@@ -51,6 +52,25 @@ export default function SubredditChipInput({
     onValidatingChange?.(getIsValidating(chipStates, chips));
   }, [chips, chipStates, onChipsChange, onValidatingChange, getValidChips, getIsValidating]);
 
+  useEffect(() => {
+    const name = value.replace(/^r\//, "").trim();
+    if (!SUBREDDIT_RE.test(name)) {
+      setInputStatus("idle");
+      return;
+    }
+    setInputStatus("validating");
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/subreddit/check?name=${encodeURIComponent(name)}`);
+        const json = await res.json();
+        setInputStatus(json.exists ? "valid" : "invalid");
+      } catch {
+        setInputStatus("idle");
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [value]);
+
   const addChip = useCallback(
     async (raw: string) => {
       const name = raw.replace(/^r\//, "").trim();
@@ -63,6 +83,7 @@ export default function SubredditChipInput({
       newStates.set(name, "validating");
       updateStates(newChips, newStates);
       setValue("");
+      setInputStatus("idle");
 
       try {
         const res = await fetch(
@@ -131,11 +152,11 @@ export default function SubredditChipInput({
         return (
           <span
             key={chip}
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-medium transition-colors ${
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-medium transition-colors animate-chip-in ${
               state === "validating"
                 ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
                 : state === "invalid"
-                ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"
+                ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 animate-shake"
                 : "bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300"
             }`}
           >
@@ -184,7 +205,7 @@ export default function SubredditChipInput({
                 e.stopPropagation();
                 removeChip(chip);
               }}
-              className="ml-0.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 p-0.5 leading-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500"
+              className="cursor-pointer ml-0.5 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 p-0.5 leading-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500"
               aria-label={`Remove r/${chip}`}
             >
               ×
@@ -194,22 +215,40 @@ export default function SubredditChipInput({
       })}
 
       {!atLimit && (
-        <input
-          ref={inputRef}
-          type="text"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onBlur={() => {
-            if (value) addChip(value);
-          }}
-          placeholder={
-            chips.length === 0
-              ? "e.g. startups, SaaS, productivity"
-              : "Add subreddit…"
-          }
-          className="flex-1 min-w-[140px] bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none"
-        />
+        <span className="relative flex-1 min-w-[140px] flex items-center">
+          <input
+            ref={inputRef}
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={() => {
+              if (value) addChip(value);
+            }}
+            placeholder={
+              chips.length === 0
+                ? "e.g. startups, SaaS, productivity"
+                : "Add subreddit…"
+            }
+            className="w-full bg-transparent text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 outline-none pr-5"
+          />
+          {inputStatus === "validating" && (
+            <svg className="absolute right-0 h-3.5 w-3.5 animate-spin text-zinc-400 shrink-0" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          )}
+          {inputStatus === "valid" && (
+            <svg className="absolute right-0 h-3.5 w-3.5 text-green-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+          {inputStatus === "invalid" && (
+            <svg className="absolute right-0 h-3.5 w-3.5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          )}
+        </span>
       )}
 
       <span

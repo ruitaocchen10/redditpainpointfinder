@@ -10,7 +10,7 @@
 
 /* Activated when <html class="dark"> */
 .dark {
-  --background: #0a0a0a;
+  --background: #141414;
   --foreground: #ededed;
 }
 
@@ -36,7 +36,7 @@ body {
 .dark .main-bg {
   background:
     radial-gradient(ellipse 100% 35% at 50% 0%, rgba(234, 88, 12, 0.10) 0%, transparent 60%),
-    theme('colors.zinc.950');
+    theme('colors.zinc.900');
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -125,4 +125,54 @@ body.drawer-open {
 
 .sidebar-container[data-resizing="true"] {
   transition: none;
+}
+
+/* ===========================
+   Custom animation keyframes
+   =========================== */
+
+@keyframes chip-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fade-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-4px); }
+  40%     { transform: translateX(4px); }
+  60%     { transform: translateX(-3px); }
+  80%     { transform: translateX(3px); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@layer utilities {
+  .animate-chip-in {
+    animation: chip-in 150ms ease-out both;
+  }
+  .animate-fade-slide-up {
+    animation: fade-slide-up 250ms ease-out both;
+  }
+  .animate-scale-in {
+    animation: scale-in 200ms ease-out both;
+  }
+  .animate-shake {
+    animation: shake 400ms ease-in-out both;
+  }
+  .animate-fade-in {
+    animation: fade-in 150ms ease-out both;
+  }
 }

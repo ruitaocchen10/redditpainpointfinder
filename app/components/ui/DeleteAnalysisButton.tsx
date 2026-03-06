@@ -31,7 +31,7 @@ export default function DeleteAnalysisButton({ id }: { id: string }) {
       onClick={handleDelete}
       disabled={loading}
       title={error ? "Delete failed — try again" : "Delete analysis"}
-      className={`p-1 rounded transition-colors shrink-0 ${
+      className={`cursor-pointer p-1 rounded transition-colors shrink-0 ${
         error
           ? "text-red-500 hover:text-red-600"
           : "text-zinc-400 hover:text-red-500 dark:text-zinc-500 dark:hover:text-red-400"
