@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTheme } from "../providers/ThemeProvider";
 import { createClient } from "../../../lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
@@ -33,7 +34,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   const email = user?.email ?? "—";
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-zinc-900/60 animate-fade-in" onClick={onClose} />
@@ -110,6 +111,7 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

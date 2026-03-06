@@ -13,7 +13,8 @@ export async function GET(req: NextRequest) {
       }
     );
 
-    if (!res.ok) return NextResponse.json({ exists: false });
+    if (res.status === 404) return NextResponse.json({ exists: false });
+    if (!res.ok) return NextResponse.json({ exists: true }); // can't verify from cloud IP, assume valid
 
     const data = await res.json();
 
@@ -28,6 +29,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ exists: true });
   } catch {
-    return NextResponse.json({ exists: false });
+    return NextResponse.json({ exists: true }); // network error = assume valid
   }
 }
