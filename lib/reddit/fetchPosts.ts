@@ -45,17 +45,17 @@ async function fetchSubredditPosts(
   const children = data?.data?.children ?? [];
 
   return children
-    .filter((child: { data: { is_self?: boolean; score?: number; selftext?: string } }) => {
+    .filter((child: { data: { score?: number } }) => {
       const post = child.data;
-      // Filter out link-only posts (no self-text) and low-score posts
-      if (!post.is_self) return false;
       if ((post.score ?? 0) < minUpvotes) return false;
-      if (!post.selftext || post.selftext === "[deleted]" || post.selftext === "[removed]") return false;
       return true;
     })
     .map((child: { data: Record<string, unknown> }) => {
       const post = child.data;
-      const bodyText = typeof post.selftext === "string" ? post.selftext : null;
+      const selftext = typeof post.selftext === "string" ? post.selftext : "";
+      const bodyText = (selftext && selftext !== "[deleted]" && selftext !== "[removed]")
+        ? selftext
+        : null;
       return {
         reddit_post_id: post.name as string, // e.g. "t3_abc123"
         subreddit,
